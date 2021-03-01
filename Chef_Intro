@@ -1,0 +1,27 @@
+Chef is an administration tool. System administrators used to do task manually, now it has been done automating those tasks with the use of Chef.
+Configuration management is a method throught which we automate admin tasks.
+Configuration tools turns our code into Infrastructure, ie. Infrastructure as a Code (IaaC)
+Code can be Repeatable, Testable and Versionable
+Advantages of Chef:
+  Complete Automation
+  Increase Uptime
+  Improve Performance
+  Ensure Compliance
+  Prevent Errors
+  Reduce Costs
+  
+WORKSTATIONS: Workstation are personal computers or Virtual Servers where all configuration code is created, tested and changed.
+
+RECIPES: DevOps engineer writes code at worksatation. These codes are called RECIPES.
+
+COOKBOOKS: A collection os recipes are called CookBooks.
+
+KNIFE: Knife is a Command Line Tool that uploads the cookbook to the server. Workstation communicate with Chef server using Knife.
+
+CHEF-SERVER: The Chef Server is a middle-man between the workstation and the nodes. All cookbooks are stored here. Server may be hosted locally or remote.
+
+NODE: Nodes are the system that rewuire the configuration. Node communicate with the Chef-Server using the Chef-Client. Each Node can have different configuartion. Chef-Client is installed on every nodes.
+
+OHAI: Ohai contains all the updated information about node. 
+
+
