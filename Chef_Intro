@@ -24,4 +24,100 @@ NODE: Nodes are the system that rewuire the configuration. Node communicate with
 
 OHAI: Ohai contains all the updated information about node. 
 
+Create a Virtual Machine. Start Linux Machine on Cloud.
+
+[]$ sudo do  {Super user do switch user}
+[]# yum update -y   {will update Linux machine tools and softwares. -y will yes every steps}
+
+Download Chef Workstation from www.chef.io. Copy the URL of that package 
+
+[]# wget <URL>   {wget will download the package}
+[]# yum install <chef_worksatation> -y  {installs chef, -y will yes every steps}
+[]# which chef  {will show the directory where chef is located}
+[]# chef --version   {shows the version}
+
+COOKBOOK: It is a collection of recipes and some other files and folders. Cookbook contains:
+  Chefignore: like gitignore
+  Kitchen.yml: to test cookbook
+  Metadata.rb: name, version, author info of cookbook. rb stands for Ruby file type
+  Readme.md: informatioin about usage of cookbook
+  Recipe: where the code is written
+  Spec: used for unit test
+  Test: used for integration test
+  
+[]# mkdir cookbooks  {create a directory named 'cookbooks'}
+[]# cd cookbooks {goes inside directory cookbooks}
+[]# chef generate cookbook test-cookbook  {will create a test-cookbook inside cookbook directory}
+[]# yum install tree -y   {installs tree (tool to see tree view)}
+[]# tree   {will show a tree view of the directory}
+[]# cd test-cookbook/
+[]# chef generate recipe <name>   {will create a recipe}
+[]# chef generate recipe recipe1
+[]# cd ..  {go back to parent folder}
+[]# vi test-cookbook/recipes/recipe1.rb  {vi will open an editor for recipe1. rb means ruby file}
+  file '/myfile1' do
+  content "Welcome to Chef Project"
+  action :create
+  end
+  {pess esc and :wq. w will save the file and q to quit editor}
+[]# chef spec ruby -c test-cookbook/recipes/recipe1.rb  {spec will chek the ruby code syntax, -c means check}
+>> Syntax OK
+[]# chef-client -zr "recipe[test-cookbook::recipe1.rb]"  {z-local machine, r-run list. chef-client will run/execute the recipe1.rb on local machine}
+[]# ls /  {/-root dir. ls will list all files in root dir}
+[]# cat myfile1  {cat will show file content}
+[]# chef generate recipe recipe2
+[]# vi test-cookbook/recipes/recipe2.rb
+  package 'tree' do
+  action :install
+  end
+  
+  file '/myfile2' do
+  content "My First Chef Project"
+  action :create
+  owner :root
+  group :root
+  end
+  {pess esc and :wq. w will save the file and q to quit editor}
+[]# chef generate cookbook apache-cookbook
+[]# cd apache-cookbook
+[]# chef generate recipe apache-recipe
+[]# vi apache-cookbook/recipes/apache-recipe.rb
+  package 'httpd' do
+  action :install
+  end
+  
+  file '/var/www/html/index.html' do
+  content "Welcome to Apache Page" 
+  action :create
+  end
+  
+  serivce 'httpd' do
+  action [:enable, :start]   {give two actions in one line}
+  end
+  {pess esc and :wq. w will save the file and q to quit editor}
+[]# chef exec ruby -c apache-cookbook/recipes/apache-recipe.rb  {exec will check the recipe syntax}
+>> Syntax OK
+[]# chef-client -zr "recipe[apache-cookbook::apache-recipe.rb]"  {Ohai will check if the node have apache server or not. If it already have, then this command will not execute. Instead it will give message up-to-date}
+
+RESOURCE: It is a basic component of a recipe used to manage the infrastructure with different kind of states.
+
+package: Manages the package on nodes.
+
+service: Manage services on the nodes.
+
+user: Manage users on the node.
+
+group: Manage groups on the node.
+
+template: Manages files with embeded Ruby template.
+
+Cookbook-file: 
+file:
+
+
+
+
+
+
+
 
