@@ -111,8 +111,106 @@ group: Manage groups on the node.
 
 template: Manages files with embeded Ruby template.
 
-Cookbook-file: 
-file:
+Cookbook-file: Transfer the files from the subdirectory in the cookbook to the node.
+
+file: Manages the content of the file.
+
+execute: Executes a command on the node.
+
+cron: Edits an existing cron file on the node.
+
+directory: Manages the directory on the node.
+
+ATTRIBUTES: It is key-value pair which represents a specific detail about a node. Chef-client uses attributes to check the current state of node. 
+Attributes defined by Ohai have the highest priority, followed by attributes defined in a recipe then the attributes defined in an attribute files.
+
+Types of attributes are:
+  -default
+  -force-default
+  -normal
+  -override
+  -force-override
+  -automatic
+  
+Who defines the attribute:
+  -Node
+  -Cookbook
+  -Roles
+  -Environment
+  -Recipes
+  
+[]$ sudo su
+[]# ohai  {it will give all the info of the node}
+[] ohai ipaddress  {>>10.1.1.0}
+[] ohai memory/total
+[] cd apache-cookbook/
+[] chef generate recipe recipe3
+[] cd ..
+[] vi apache-cookbook/recipes/recipe3.rb
+  file '/basicinfo' do
+  content "This is to get attributes
+  HOSTNAME: #{node['hostname']}
+  IPADDRESS: #{node['ipaddress']}
+  CPU: #{node['cpu']}
+  MEMORY: #{node['memory']['total']}"
+  owner 'root'
+  group 'root'
+  action :create
+  end
+[] chef-client -zr "recipe[apache-cookbook::recipe.rb]"
+[] cat /basicinfo  {cat will show the content of the file}
+
+Execute Linux script/command in recipes:
+[] vi test-cookbook/recipes/recipe4.rb
+  execute "run a script" do
+  command <<_EOH
+  mkdir /subfolder
+  touch /subfile   {touch will create a file}
+  EOH
+  end
+  :wq
+[] chef-client -zr "recipe[test-cookbook::recipe4.rb]"
+[] vi test-cookbook/recipes/recipe4.rb  {add/append code to recipe4.rb}
+  user "sub-admin" do
+  action :create
+  end
+  :wq
+[] chef-client -zr "recipe[test-cookbook::recipe4.rb]"  {it will override /subfolder and /subfile}
+[] vi test-cookbook/recipes/recipe4.rb  {add/append code to recipe4.rb}
+  group "administrators" do
+  action :create
+  members 'sub-admin'
+  append true
+  end
+  :wq
+[] chef-client -zr "recipe[test-cookbook::recipe4.rb]"  {it will override /subfolder and /subfile}
+[] cat /etc/group  
+
+CONVERGENCE: We run chef-client to apply recipe to bring the node into desired state. This process is called Convergence.
+
+RUNLIST: To run the recipe in sequencial order that we mention in a run list. With this process we can run multiple recipes.
+
+[] chef-client -zr "recipe[test-cookbook::recipe4.rb], recipe[apache-cookbook::apache-recipe.rb]"
+
+We can run multiple recipes by including recipes to the default.rb
+[] vi test-cookbook/recipes/default.rb
+  include_recipe "test-cookbook::recipe1"
+  include_recipe "test-cookbook::recipe2"
+  :wq
+[] chef-client -zr "recipe[test-cookbook::default.rb]"
+[] vi apache-cookbook/recipes/default.rb
+  include_recipe "apache-cookbook::recipe3"
+  include_recipe "apache-cookbook::recipe4"
+  :wq
+[] chef-client -zr "recipe[test-cookbook::default.rb], recipe[apache-cookbook::default.rb]"
+
+[] chef-client -zr "
+
+  
+  
+  
+
+
 
 
 
