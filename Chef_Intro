@@ -60,7 +60,7 @@ COOKBOOK: It is a collection of recipes and some other files and folders. Cookbo
   action :create
   end
   {pess esc and :wq. w will save the file and q to quit editor}
-[]# chef exec ruby -c test-cookbook/recipes/recipe1.rb  {spec will chek the ruby code syntax, -c means check}
+[]# chef exec ruby -c test-cookbook/recipes/recipe1.rb  {exec will chek the ruby code syntax, -c means check}
 >> Syntax OK
 []# chef-client -zr "recipe[test-cookbook::recipe1.rb]"  {z-local machine, r-run list. chef-client will run/execute the recipe1.rb on local machine}
 []# ls /  {/-root dir. ls will list all files in root dir}
@@ -74,8 +74,8 @@ COOKBOOK: It is a collection of recipes and some other files and folders. Cookbo
   file '/myfile2' do
   content "My First Chef Project"
   action :create
-  owner :root
-  group :root
+  owner 'root'
+  group 'root'
   end
   {pess esc and :wq. w will save the file and q to quit editor}
 []# chef generate cookbook apache-cookbook
