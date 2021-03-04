@@ -49,6 +49,7 @@ COOKBOOK: It is a collection of recipes and some other files and folders. Cookbo
 []# cd cookbooks {goes inside directory cookbooks}
 []# chef generate cookbook test-cookbook  {will create a test-cookbook inside cookbook directory}
 []# yum install tree -y   {installs tree (tool to see tree view)}
+[]# yum remove tree -y  {incase if want to uninstall tree}
 []# tree   {will show a tree view of the directory}
 []# cd test-cookbook/
 []# chef generate recipe <name>   {will create a recipe}
@@ -157,13 +158,13 @@ Who defines the attribute:
   group 'root'
   action :create
   end
-[] chef-client -zr "recipe[apache-cookbook::recipe.rb]"
+[] chef-client -zr "recipe[apache-cookbook::recipe3.rb]"
 [] cat /basicinfo  {cat will show the content of the file}
 
 Execute Linux script/command in recipes:
 [] vi test-cookbook/recipes/recipe4.rb
   execute "run a script" do
-  command <<_EOH
+  command <<-EOH
   mkdir /subfolder
   touch /subfile   {touch will create a file}
   EOH
@@ -190,7 +191,10 @@ CONVERGENCE: We run chef-client to apply recipe to bring the node into desired s
 
 RUNLIST: To run the recipe in sequencial order that we mention in a run list. With this process we can run multiple recipes.
 
-[] chef-client -zr "recipe[test-cookbook::recipe4.rb], recipe[apache-cookbook::apache-recipe.rb]"
+[] chef-client -zr "recipe[test-cookbook::recipe4.rb],recipe[apache-cookbook::apache-recipe.rb]"
+Above command may not run due to lack of permission. In that case, run the command as sudo
+[] sudo chef-client -zr "recipe[test-cookbook::recipe4.rb],recipe[apache-cookbook::apache-recipe.rb]"
+NOTE IMP: THERE SHOULD BE NO SPACE BETWEEN TWO RECIPES IN THE ARGUMENT. IT WILL THROW AN ARGUMENT ERROR.
 
 We can run multiple recipes by including recipes to the default.rb
 [] vi test-cookbook/recipes/default.rb
@@ -202,7 +206,7 @@ We can run multiple recipes by including recipes to the default.rb
   include_recipe "apache-cookbook::recipe3"
   include_recipe "apache-cookbook::recipe4"
   :wq
-[] chef-client -zr "recipe[test-cookbook::default.rb], recipe[apache-cookbook::default.rb]"
+[] chef-client -zr "recipe[test-cookbook::default.rb],recipe[apache-cookbook::default.rb]"
 
  
 
