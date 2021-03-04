@@ -60,7 +60,7 @@ COOKBOOK: It is a collection of recipes and some other files and folders. Cookbo
   action :create
   end
   {pess esc and :wq. w will save the file and q to quit editor}
-[]# chef spec ruby -c test-cookbook/recipes/recipe1.rb  {spec will chek the ruby code syntax, -c means check}
+[]# chef exec ruby -c test-cookbook/recipes/recipe1.rb  {spec will chek the ruby code syntax, -c means check}
 >> Syntax OK
 []# chef-client -zr "recipe[test-cookbook::recipe1.rb]"  {z-local machine, r-run list. chef-client will run/execute the recipe1.rb on local machine}
 []# ls /  {/-root dir. ls will list all files in root dir}
@@ -204,7 +204,7 @@ We can run multiple recipes by including recipes to the default.rb
   :wq
 [] chef-client -zr "recipe[test-cookbook::default.rb], recipe[apache-cookbook::default.rb]"
 
-[] chef-client -zr "
+ 
 
   
   
