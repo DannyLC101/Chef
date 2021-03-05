@@ -208,6 +208,79 @@ We can run multiple recipes by including recipes to the default.rb
   :wq
 [] chef-client -zr "recipe[test-cookbook::default.rb],recipe[apache-cookbook::default.rb]"
 
+CHEF-SERVER: Create a chef server at manage.chef.io>> login>>create organization>> Download StarterKit.
+Download CyberDuck on Mac to connect Chef-server and Chef-wrokstation. 
+Copy the chef-repo directory from chef-server to the workstation. For that right-click and upload from local.
+Now chef-repo directory is at workstation and at server too. If you make any changes to chef-repo directory , it will be reflected at chef-server and at workstation.
+In short, Chef-repo is a repository where you can contribute cookbooks and recipes.
+There will be a directory named 'cookbooks' in chef-repo. Copy all the cookbooks that we created 
+ie. test-cookbook and apache-cookbook to chef-repo/cookbook and delete empty 'cookbooks' directory from local workstation.
+[] mv cookbooks/apache-cookbook chef-repo/cookbook  {moving apache-cookbook to chef-repo/cookbook}
+[] mv cookbooks/test-cookbook chef-repo/cookbook  {moving test-cookbook to chef-repo/cookbook}
+[] cd ..
+[] rm -rf cookbooks/   {will delete the cookbooks other that chef-repo}
+
+[] ls
+>>chef-repo  chef-workstation.rpm  cookbooks  nodes
+[] cd chef-repo
+[] ls
+>>.chef  cookbooks  .gitignore  README.md  roles
+[] cd .chef/
+[] ls
+>>config.rb  dhwani.pem {config file and company file 'dhwani.pem'}
+[] cat config.rb {it will show the details of the chef-server and your organization}
+>>See http://docs.chef.io/config_rb.html for more information on knife conf
+iguration options
+current_dir = File.dirname(__FILE__)
+log_level                :info
+log_location             STDOUT
+node_name                "dhwani"
+client_key               "#{current_dir}/dhwani.pem"
+chef_server_url          "https://api.chef.io/organizations/123learn"
+cookbook_path            ["#{current_dir}/../cookbooks"]
+
+[] knife ssl check  {it will check the connection of workstation with server}
+>>Connecting to host api.chef.io:443
+Successfully verified certificates from `api.chef.io'
+
+NOTE: you can see node, cookbook, recipes in the UI at `api.chef.io'
+
+
+CREATE AN EC2 INSTANCE As NODE1: Create a key pair at the end named as node 1_keypair 
+which will create a file 'node1_keypair.pem'
+copy the ipaddress of the node1
+
+//command in chef workstation command prompt:
+[] cd chef-repo
+[] knife bootstrap <node1 ipaddress> --ssh-user ec2-user --sudo -i node1_keypair.pem -N node1
+[] knife cookbook upload apache-cookbook  {it will upload apache-cookbook on chef-server}
+NOTE: You can see the cookbook on `api.chef.io' in 'Policy' tab
+
+[] knife cookbook list  {see the list of cookbook on chef-server}
+[] knife node run_list set chef_node1 "recipe[apache-cookbook::recipe3]"  
+[] knife node show chef_node1
+
+CONNECT TO CHEF_NODE1 CMD PROMPT: 
+[] sudo su
+[] chef-client  {chef-client will call a server and run the list set for the node, here chef_node1}
+ GOTO WORKSTATION CMD PROMPT:
+[] vi cookbooks/apache-cookbook/recipes/recipe3.rb  {make some changes to content}
+[] knife cookbook upload apache-cookbook  {upload cookbook again}
+GOTO CHEF_NODE1 CMD PROMPT:
+[] chef-client
+
+
+
+CREATE ROLE IN CHEF:
+[] knife cookbook list  {to see the list of cookbooks}
+[] knife cookbook delete <cookbook_name> -y  {deletes a cookbook}
+[] knife node list  {to see the list of nodes}
+[] kniife node delete <node_name> -y {deletes a node}
+[] knife client-list  {too see the list of clients present in chef-server}
+[] knife client delete <client_name> -y  {deletes the client}
+[] knife role list  {to list the roles present in chef-server}
+[] knife role delete <role_name> -y  {delete role from the chef-server}
+
  
 
   
