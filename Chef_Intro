@@ -246,7 +246,13 @@ Successfully verified certificates from `api.chef.io'
 NOTE: you can see node, cookbook, recipes in the UI at `api.chef.io'
 
 
-CREATE AN EC2 INSTANCE As NODE1: Create a key pair at the end named as node 1_keypair 
+CREATE AN EC2 INSTANCE As NODE1: 
+On step-3>> Subnet:Defualt in us-east-2a>> 
+User data: #!/bin//bash
+           sudo su
+           yum update -y
+This will update the instance while creating it.           
+Create a key pair at the end named as node 1_keypair 
 which will create a file 'node1_keypair.pem'
 copy the ipaddress of the node1
 
@@ -268,7 +274,22 @@ CONNECT TO CHEF_NODE1 CMD PROMPT:
 [] knife cookbook upload apache-cookbook  {upload cookbook again}
 GOTO CHEF_NODE1 CMD PROMPT:
 [] chef-client
+[] vi /etc/crontab  {cron helps create schedule to execute command}
+>> * * * * * root   {append this line to file and save}
 
+CREATE AN EC2 INSTANCE As NODE1: 
+On step-3>> Subnet:Defualt in us-east-2a>> 
+User data: #!/bin//bash
+           sudo su
+           yum update -y
+           echo "* * * * * root chef-client">>etc/crontab
+step-5: name=chef_node2
+step-6: Assign a security group: select an existing = node-sg
+Launch: choose an existing pair:node1_keypair
+
+GOTO WORKSTATION CMD:
+[] knife bootstrap <node1 ipaddress> --ssh-user ec2-user --sudo -i node1_keypair.pem -N node1
+[] knife node run_list set chef_node2 "recipe[apache-cookbook::recipe3.rb]"
 
 
 CREATE ROLE IN CHEF:
@@ -276,15 +297,40 @@ CREATE ROLE IN CHEF:
 [] knife cookbook delete <cookbook_name> -y  {deletes a cookbook}
 [] knife node list  {to see the list of nodes}
 [] kniife node delete <node_name> -y {deletes a node}
+Even after deleting a node, they can be seen in chef-client which also needed to be deleted.
 [] knife client-list  {too see the list of clients present in chef-server}
 [] knife client delete <client_name> -y  {deletes the client}
 [] knife role list  {to list the roles present in chef-server}
 [] knife role delete <role_name> -y  {delete role from the chef-server}
 
  
-
-  
-  
+GOTO WORKSTATION CMD:
+[] cd chef-repo/roles
+[] vi devops.rb  {append below line ti the file}
+name "devops"
+description "Web server role"
+run_list "recipe[apache-cookbook::recipe3]"
+esc:wq
+[] cd ..
+[chef-repo] knife role from file roles/devops.rb
+>> Updated Roles devops
+[] knife role list  {lists all the roles}
+[] knife node run_list set chef_node1 "role[devops]"
+[] knife node run_list set chef_node1 "role[devops]"  {it will add role 'devops' for the node}
+[] knife node show chef_node1  {will show the node associated with the node}
+[]  vi devops.rb  {append below line ti the file}
+run_list "recipe[apache-cookbook]","recipe[test-cookbook]"
+esc:wq
+[] knife role from file roles/devops.rb
+[] vi cookbooks/apache-cookbook/recipes/recipe3.rb  {append below lines}
+%w(httpd unzip git vim) .each do |p|
+package p do
+action :install
+end
+end
+esc:wq
+NOTE: above code will install apache, unzip, git, vim all togather.
+[] knife cookbook upload apache-cookbook
   
 
 
