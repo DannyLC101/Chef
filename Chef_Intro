@@ -26,7 +26,7 @@ OHAI: Ohai contains all the updated information about node.
 
 Create a Virtual Machine. Start Linux Machine on Cloud.
 
-[]$ sudo do  {Super user do switch user}
+[]$ sudo su  {Super user do switch user}
 []# yum update -y   {will update Linux machine tools and softwares. -y will yes every steps}
 
 Download Chef Workstation from www.chef.io. Copy the URL of that package 
